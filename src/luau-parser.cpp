@@ -8,12 +8,12 @@ LuauParser::LuauParser(const std::string &file, long min, long max) : _min(min),
 	_outStream.open("output.luau", std::ios::out);
 }
 
-std::streampos LuauParser::get_placeholder()
+std::streampos LuauParser::find_placeholder()
 {
-	return get_placeholder(_inStream.tellg());
+	return find_placeholder(_inStream.tellg());
 }
 
-std::streampos LuauParser::get_placeholder(std::streampos start)
+std::streampos LuauParser::find_placeholder(std::streampos start)
 {
 	_inStream.seekg(start);
 
@@ -40,10 +40,9 @@ std::streampos LuauParser::get_placeholder(std::streampos start)
 	return -1;
 }
 
-void LuauParser::write(std::streampos readStart, std::streampos readEnd, std::streampos writeStart, const std::string &buff)
+void LuauParser::write_from_instream(std::streampos readStart, std::streampos readEnd)
 {
 	_inStream.seekg(readStart);
-	_outStream.seekp(writeStart);
 
 	size_t bufferSize = readEnd - readStart;
 	char *buffer = new char[bufferSize];
@@ -52,8 +51,6 @@ void LuauParser::write(std::streampos readStart, std::streampos readEnd, std::st
 	_outStream.write(buffer, bufferSize);
 
 	delete[] buffer;
-
-	_outStream.write(buff.c_str(), buff.size());
 }
 
 void LuauParser::write()
@@ -74,7 +71,7 @@ void LuauParser::write()
 			readStart = std::move(placeholder) + std::streampos(3);
 		}
 
-		placeholder = get_placeholder(readStart);
+		placeholder = find_placeholder(readStart);
 
 		if (placeholder == -1)
 		{
@@ -111,8 +108,7 @@ void LuauParser::write()
 
 		case '3':
 		{
-			// Just write the template content on the left of the placeholder first
-			write(readStart, placeholder, _outStream.tellp(), "");
+			write_from_instream(readStart, placeholder);
 
 			for (long i = _min; i <= _max; i++)
 			{
@@ -141,7 +137,9 @@ void LuauParser::write()
 		}
 		}
 
-		write(readStart, placeholder, _outStream.tellp(), content);
+		write_from_instream(readStart, placeholder);
+
+		_outStream.write(content.c_str(), content.size());
 	}
 
 	_outStream.flush();
