@@ -6,7 +6,7 @@ OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
 main: $(OBJ_FILES)
 	mkdir -p $(BIN_DIR)
-	g++ -o $(BIN_DIR)/$@ $^
+	g++ -o $(BIN_DIR)/$@ -lboost_program_options $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(OBJ_DIR)
