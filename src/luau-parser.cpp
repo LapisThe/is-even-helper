@@ -2,12 +2,6 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace
-{
-// In bytes
-constexpr long MAX_CONTENT_BUFFER_SIZE = 1024l * 1024 * 1024 * 4;
-}; // namespace
-
 LuauParser::LuauParser(const std::string &file, long min, long max) : _min(min), _max(max)
 {
 	_inStream.open(file, std::ios::in);
@@ -137,12 +131,6 @@ void LuauParser::write()
 				}
 
 				_outStream.write(content.c_str(), content.size());
-
-				// Flush the stream if memory limit exceeded
-				if (sizeof(content) >= MAX_CONTENT_BUFFER_SIZE)
-				{
-					_outStream.flush();
-				}
 			}
 			continue;
 		}
@@ -155,6 +143,8 @@ void LuauParser::write()
 
 		write(readStart, placeholder, _outStream.tellp(), content);
 	}
+
+	_outStream.flush();
 }
 
 void LuauParser::close()
