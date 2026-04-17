@@ -11,7 +11,7 @@ constexpr long MAX_CONTENT_BUFFER_SIZE = 1024l * 1024 * 1024 * 4;
 LuauParser::LuauParser(const std::string &file, long min, long max) : _min(min), _max(max)
 {
 	_inStream.open(file, std::ios::in);
-	_outStream.open("IsEven.luau", std::ios::out);
+	_outStream.open("output.luau", std::ios::out);
 }
 
 std::streampos LuauParser::get_placeholder()
