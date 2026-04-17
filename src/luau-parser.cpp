@@ -118,11 +118,17 @@ void LuauParser::write()
 		case '3':
 		{
 			// Just write the template content on the left of the placeholder first
-			write(readStart, placeholder - std::streampos(1), _outStream.tellp(), "");
+			write(readStart, placeholder, _outStream.tellp(), "");
 
 			for (long i = _min; i <= _max; i++)
 			{
 				content = "\tif PassedNumber == " + std::to_string(i) + " then\n\t\treturn " + (i % 2 == 0 ? "true" : "false") + "\n\tend\n";
+
+				// Remove first \t
+				if (i == _min)
+				{
+					content.erase(0, 1);
+				}
 
 				// Remove trailing \n
 				if (i == _max)
