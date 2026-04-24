@@ -27,7 +27,7 @@ class LuauParser
 	void write_from_instream(std::streampos readStart, std::streampos readEnd);
 
 public:
-	LuauParser(const std::string &file, long min, long max);
+	LuauParser(const std::string &file, const std::string &output, long min, long max);
 
 	void write();
 	void close();

@@ -2,10 +2,10 @@
 #include <iostream>
 #include <stdexcept>
 
-LuauParser::LuauParser(const std::string &file, long min, long max) : _min(min), _max(max)
+LuauParser::LuauParser(const std::string &file, const std::string &output, long min, long max) : _min(min), _max(max)
 {
 	_inStream.open(file, std::ios::in);
-	_outStream.open("output.luau", std::ios::out);
+	_outStream.open(output, std::ios::out);
 }
 
 std::streampos LuauParser::find_placeholder()
