@@ -1,11 +1,49 @@
 #include "luau-parser.hpp"
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
 LuauParser::LuauParser(const std::string &file, const std::string &output, long min, long max) : _min(min), _max(max)
 {
 	_inStream.open(file, std::ios::in);
+
+	if (_inStream.fail())
+	{
+		switch (errno)
+		{
+		case EACCES:
+			std::cout << "No permission to read template file\n";
+			break;
+
+		case ENOENT:
+			std::cout << "No template file found\n";
+			break;
+
+		default:
+			std::perror("opening template file");
+		}
+
+		exit(EXIT_FAILURE);
+	}
+
 	_outStream.open(output, std::ios::out);
+
+	if (_outStream.fail())
+	{
+		switch (errno)
+		{
+		case EACCES:
+			std::cout << "No permission to write to output file\n";
+			break;
+
+		default:
+			std::perror("opening output file");
+		}
+
+		exit(EXIT_FAILURE);
+	}
 }
 
 std::streampos LuauParser::find_placeholder()
